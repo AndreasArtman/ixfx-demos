@@ -1,4 +1,4 @@
-import * as Types from '../lib/Types.js';
+import * as MoveNet from '../lib/bundle.js';
 import { PoseTracker } from './PoseTracker.js';
 import * as Coco from '../lib/Coco.js';
 /**
@@ -38,20 +38,20 @@ export class PosesTracker {
       maxAgeMs: 10_000,
       resetAfterSamples: 0,
       sampleLimit: 100,
-      storeIntermediate:false,
+      storeIntermediate: false,
       ...options
     };
     setInterval(() => {
       // Delete expired poses
-      const expired = [...this.#data.entries()].filter(entry=>entry[1].elapsed > this.#options.maxAgeMs);
+      const expired = [...this.#data.entries()].filter(entry => entry[1].elapsed > this.#options.maxAgeMs);
       for (const entry of expired) {
         this.#data.delete(entry[0]);
-        this.events.dispatchEvent(new CustomEvent(`expired`, {detail:entry[1]}));
+        this.events.dispatchEvent(new CustomEvent(`expired`, { detail: entry[1] }));
       }
     }, 1000);
   }
 
-  
+
   /**
    * Enumerates each of the PoseTrackers, sorted by age
    * (ie. one for each body).
@@ -59,7 +59,7 @@ export class PosesTracker {
    */
   *getByAge() {
     const trackers = [...this.#data.values()];
-    trackers.sort((a,b)=>a.elapsed-b.elapsed);
+    trackers.sort((a, b) => a.elapsed - b.elapsed);
     yield* trackers.values();
   }
 
@@ -78,14 +78,14 @@ export class PosesTracker {
   *getRawPosesByAge() {
     for (const tracker of this.getByAge()) {
       yield tracker.last;
-    }  
+    }
   }
 
   *getRawPoses() {
     const values = [...this.#data.values()];
     for (const tracker of values) {
       yield tracker.last;
-    }  
+    }
   }
 
   /**
@@ -197,20 +197,20 @@ export class PosesTracker {
    * Track a pose.
    * Fires `added` event if it is a new pose.
    * Returns the globally-unique id for this pose
-   * @param {Types.Pose} pose 
+   * @param {MoveNet.Pose} pose 
    * @param {string} from
    */
   seen(from, pose) {
     if (from === undefined) throw new Error(`Parameter 'from' is undefined`);
     if (pose === undefined) throw new Error(`Parameter 'pose' is undefined`);
     const id = (pose.id ?? 0).toString();
-    const nsId = from+`-`+id;
+    const nsId = from + `-` + id;
     let tp = this.#data.get(nsId);
     if (tp === undefined) {
       tp = new PoseTracker(from, id, this.#options);
       this.#data.set(nsId, tp);
       tp.seen(pose);
-      this.events.dispatchEvent(new CustomEvent(`added`, {detail:tp}));
+      this.events.dispatchEvent(new CustomEvent(`added`, { detail: tp }));
     } else {
       tp.seen(pose);
     }

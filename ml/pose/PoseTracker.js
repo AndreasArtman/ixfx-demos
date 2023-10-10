@@ -1,6 +1,6 @@
-import {PointTracker, TrackedPointMap, pointsTracker} from '../../ixfx/data.js';
+import { PointTracker, TrackedPointMap, pointsTracker } from '../../ixfx/data.js';
 import * as Coco from '../lib/Coco.js';
-import * as Types from '../lib/Types.js';
+import * as MoveNet from '../lib/bundle.js';
 
 /**
  * Track details of a single pose
@@ -10,7 +10,7 @@ export class PoseTracker {
   #poseId;
   #guid;
   #seen = 0;
-  /** @type Types.Pose */
+  /** @type MoveNet.Pose */
   #data;
   /** @type TrackedPointMap */
   points;
@@ -26,9 +26,9 @@ export class PoseTracker {
   constructor(fromId, poseId, options) {
     this.#poseId = poseId;
     this.#fromId = fromId;
-    this.#guid = fromId+`-`+poseId;
+    this.#guid = fromId + `-` + poseId;
     this.#hue = Math.random() * 360;
-    this.points = pointsTracker({id:poseId, ...options});
+    this.points = pointsTracker({ id: poseId, ...options });
   }
 
   /**
@@ -39,11 +39,11 @@ export class PoseTracker {
     const box = this.#data.box;
     if (box) {
       return {
-        x: box.xMin + box.width/2,
-        y: box.yMin + box.height/2
+        x: box.xMin + box.width / 2,
+        y: box.yMin + box.height / 2
       };
     }
-    return {x:0,y:0};
+    return { x: 0, y: 0 };
   }
 
   /**
@@ -67,7 +67,7 @@ export class PoseTracker {
   get hsl() {
     return `hsl(${this.#hue}, 70%, 50%)`;
   }
-  
+
   /**
    * Returns the globally unique id of this pose
    * (fromId-poseId)
@@ -89,7 +89,7 @@ export class PoseTracker {
   get fromId() {
     return this.#fromId;
   }
-  
+
   /**
    * Returns the tracker for a given keypoint
    * @param {*} name 

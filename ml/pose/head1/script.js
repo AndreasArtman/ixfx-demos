@@ -53,6 +53,7 @@ const update = () => {
     heads.push(head);
     
   }
+  console.log(heads)
 
   saveState({heads});
 };
@@ -63,7 +64,7 @@ const update = () => {
  * @return {Head} 
  */
 const computeHead = (pose) => {
-  const nose = MoveNet.Coco.getKeypoint(pose, `nose`);
+  const nose = MoveNet.Coco.getKeypoint(pose, `right_writs`);
   const leftEar = MoveNet.Coco.getKeypoint(pose, `left_ear`);
   const rightEar = MoveNet.Coco.getKeypoint(pose,`right_ear`);
   const earDistance = Points.distance(leftEar, rightEar);
