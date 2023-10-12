@@ -25,8 +25,8 @@
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--fg);
+      background-color: white;
+      color: black;
       font-family: var(--font);
       overflow: hidden;
       user-select: none;
@@ -42,15 +42,27 @@
       width: 20vw;
       height: 20vw;
       text-align: center;
-      display:flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0.8;
     }
+
+    .ball {
+      width: 400px;
+      height: 400px;
+      border-radius: 500px;
+      background-color: rgb(40, 18, 18);
+  
+    }
   </style>
   <section>
-    <h1>pose-between</h1>
-    <script type="module" src="script.js"></script>
+    <h1>Sesaw</h1>
+    <div id="ball" class="ball">
+
+    </div>
+    <script type="module" src="script.js">
+    </script>
   </section>
 </body>
 

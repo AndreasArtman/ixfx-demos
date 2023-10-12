@@ -39,19 +39,21 @@ const update = () => {
     const middle = MoveNet.roughCenter(p.last);
     if (middle === undefined) continue;
     middles.push({ id: p.guid, position: middle });
-
-
-
   }
-
 
   saveState({ middles });
 
+  // Calculate the sum
   let sum = (middles[0].position.x + middles[1].position.x) / 2
   console.log(sum)
 
+  // Update the position of the box
+  const box = document.getElementById("ball");
+  if (box) { // Check if the element exists
+    box.style.position = "absolute";  // or "fixed", "relative", "sticky"
+    box.style.left = sum  * window.innerWidth + "px";  // Add "px" to specify units
+  }
 };
-
 /**
  * Called when a new pose is detected
  * @param {*} event 
@@ -59,12 +61,10 @@ const update = () => {
 const onPoseAdded = (event) => {
   const poseTracker = /** @type MoveNet.PoseTracker */(event.detail);
 
-  // Create a thing for this pose
-  const x = poseTracker.middle().x;
-  const thingForPose = Things.create(poseTracker.guid, x);
+
 
   // Add it
-  saveState({ things: [...state.things, thingForPose] });
+  saveState({ things: [...state.things] });
 };
 
 /**
