@@ -8,7 +8,7 @@ const settings = Object.freeze({
   // How quickly to call update()
   updateRateMs: 100,
   remote: new Remote(),
-  poses: new MoveNet.PosesTracker({maxAgeMs: 500 }),
+  poses: new MoveNet.PosesTracker({ maxAgeMs: 500 }),
   canvasEl: /** @type HTMLCanvasElement */(document.querySelector(`#canvas`)),
 });
 
@@ -36,7 +36,7 @@ let state = Object.freeze({
     center: { x: 0, y: 0 },
   },
   scaleBy: 1,
-  heads:[]
+  heads: []
 });
 
 /**
@@ -44,19 +44,38 @@ let state = Object.freeze({
  * new from latest pose data
  */
 const update = () => {
-  const {poses} = settings;
+  const { poses } = settings;
 
   // Compute a head size for each pose
   const heads = [];
+  const noses = [];
   for (const pose of poses.getRawPoses()) {
     const head = computeHead(pose);
+    const nose = computeNose(pose);
     heads.push(head);
-    
-  }
-  console.log(heads)
+    noses.push(nose);
 
-  saveState({heads});
+    //console.log(MoveNet.Coco.getKeypoint(pose, "nose"))
+    //console.log(pose.keypoints)
+    for (const element of pose.keypoints) {
+      if (element.name === "nose")
+      console.log(element)
+    }
+
+  }
+
+  saveState({ heads });
+
 };
+
+const computeNose = (pose) => {
+  const nose = MoveNet.Coco.getKeypoint(pose, `nose`);
+  return {
+    x: nose.x,
+    y: nose.y,
+    poseId: pose.id
+  }
+}
 
 /**
  * Returns a circle based on a few head keypoints
@@ -64,9 +83,9 @@ const update = () => {
  * @return {Head} 
  */
 const computeHead = (pose) => {
-  const nose = MoveNet.Coco.getKeypoint(pose, `right_writs`);
+  const nose = MoveNet.Coco.getKeypoint(pose, `nose`);
   const leftEar = MoveNet.Coco.getKeypoint(pose, `left_ear`);
-  const rightEar = MoveNet.Coco.getKeypoint(pose,`right_ear`);
+  const rightEar = MoveNet.Coco.getKeypoint(pose, `right_ear`);
   const earDistance = Points.distance(leftEar, rightEar);
   const radius = earDistance / 2;
   return {
@@ -89,7 +108,7 @@ const draw = () => {
 
   // Draw each head
   for (const head of heads) {
-    
+
     drawHead(context, head);
   }
 };
@@ -103,12 +122,12 @@ const drawHead = (context, head) => {
   const { scaleBy } = state;
   const { poses } = settings;
 
-  const headAbs = Points.multiplyScalar(head,scaleBy);
-  const radius = head.radius*scaleBy;
+  const headAbs = Points.multiplyScalar(head, scaleBy);
+  const radius = head.radius * scaleBy;
   const tracker = poses.getByPoseId(head.poseId);
   if (tracker === undefined) return;
   const hue = tracker.hue;
-  
+
   // Translate canvas so 0,0 is the center of head
   context.save();
   context.translate(headAbs.x, headAbs.y);
@@ -116,7 +135,7 @@ const drawHead = (context, head) => {
   // Draw a circle
   context.beginPath();
   context.fillStyle = `hsl(${hue},60%,70%)`;
-  context.arc(0,0,radius,0,Math.PI*2);
+  context.arc(0, 0, radius, 0, Math.PI * 2);
   context.fill();
 
   // Draw id of head
@@ -152,7 +171,7 @@ const onPoseExpired = (event) => {
 const onReceivedPoses = (packet) => {
   const { _from, data } = packet;
   const poseData =/** @type MoveNet.Pose[] */(data);
-  
+
   // Pass each pose over to the poses tracker
   for (const pose of poseData) {
     settings.poses.seen(_from, pose);
@@ -164,14 +183,14 @@ const onReceivedPoses = (packet) => {
  */
 function setup() {
   const { updateRateMs, remote, poses } = settings;
-  
+
   remote.onData = onReceivedPoses;
   poses.events.addEventListener(`added`, onPoseAdded);
   poses.events.addEventListener(`expired`, onPoseExpired);
 
   Dom.fullSizeCanvas(`#canvas`, arguments_ => {
     // Update state with new size of canvas
-    saveState({ 
+    saveState({
       bounds: arguments_.bounds,
       scaleBy: Math.min(arguments_.bounds.width, arguments_.bounds.height)
     });
@@ -198,7 +217,7 @@ setup();
  * Update state
  * @param {Partial<state>} s 
  */
-function saveState (s) {
+function saveState(s) {
   state = Object.freeze({
     ...state,
     ...s
