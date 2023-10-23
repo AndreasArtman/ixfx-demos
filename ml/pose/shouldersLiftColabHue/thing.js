@@ -22,6 +22,7 @@ const settings = Object.freeze({
 * }} Thing
 */
 let opacity1 = 1; 
+let hue = 0; 
 /**
  * Make use of data from `thing`
  * @param {Thing} thing 
@@ -45,7 +46,7 @@ export const use = (thing, context, bounds) => {
   //const opacity = 1;
 
   // Draw circle
-  const fillStyle = `hsl(90, 50%, 10%, ${opacity1})`;
+  const fillStyle = `hsl(${hue}, 100%, 50%, 1)`;
   Util.drawLabelledCircle(context, radius, fillStyle);
   
   // Unwind translation
@@ -68,7 +69,10 @@ export const update = (thing, ambientState) => {
   console.log(head)
   
     opacity1 = 1 - (head * 5)
-  
+
+    hue = (head * 3) * 360
+   
+    console.log(hue)
 
   // Compute new position, accel, velocity based on set of forces
   const withForce = Forces.apply(

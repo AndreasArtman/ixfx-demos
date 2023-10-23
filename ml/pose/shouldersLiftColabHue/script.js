@@ -87,7 +87,7 @@ const update = () => {
 
    
     // Add up to get average for all poses
-    angleTotal += (a + b) * 0;
+    angleTotal += (a + b);
     counted++;
     headTotal += e
   }
