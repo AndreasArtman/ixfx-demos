@@ -8,7 +8,7 @@ const settings = Object.freeze({
   // Bounce off sides, loosing some velocity
   constrainForce: Forces.constrainBounce({width:0.9,height:0.9}, 0.5),
   // Slow down velocity
-  frictionForce: Forces.velocityForce(0.01, `multiply`)
+  frictionForce: Forces.velocityForce(0.001, `multiply`)
 });
 
 /**
@@ -46,7 +46,7 @@ export const use = (thing, context, bounds) => {
   //const opacity = 1;
 
   // Draw circle
-  const fillStyle = `hsl(90, 50%, 10%, ${opacity1})`;
+  const fillStyle = `hsl(${hue}, 100%, 50%, 1)`;
   Util.drawLabelledCircle(context, radius, fillStyle);
   
   // Unwind translation
@@ -95,8 +95,8 @@ export const create = () => {
   return {
     position: { x: 0.5, y:0.5 },
     size: 0.2,
-    mass: 100,
-    velocity: {x:0,y:0},
-    acceleration: {x:0,y:-0}
+    mass: 50,
+    velocity: {x:0.1,y:0.1},
+    acceleration: {x:0.1,y:-0.1}
   };
 };
