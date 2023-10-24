@@ -63,7 +63,7 @@ export const update = (thing, ambientState) => {
   const { tilt, head } = ambientState;
   
   // Move on horizontal axis. Y remains 0
-  const vector = {y: tilt, x: 0};
+  const vector = {y: 0, x: 0};
 
   console.log(head)
   
